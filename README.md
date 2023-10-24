@@ -33,3 +33,57 @@ git config --global hub.user [your github username]
 git config --global hub.token [your github token]
 The Script:
 With the environment set up, you can now execute the script to automate your pull.
+
+
+
+When reading the comments in the script file, you’ll notice that it just executes the same manual task step by step. However, this script makes the process 100x faster than the manual process.
+To use the script, you’ll first need to download it.
+To make the script more dynamic and be able to run locally or remotely, we are passing the variables as environment variables:
+
+
+
+
+
+
+You need to append these variables to your environment variables within your ~/.bash_profile or the ~/.zshrc file
+In our script, we will use the variables above.,
+The alias is just a fancy way to execute it.
+To get the jira_access_token:
+How to create Jira API token?
+Note You need to check your terminal type!
+If it’s bash, you can continue with ~/.bash_profile.
+If it’s Zsh you need to write ~/.zshrc instead of ~/.bash_profile.
+You can identify which to choose by the title of your terminal:
+
+zsh terminal type
+Thankfully, the process of editing both files is the same — you simply need to watch the name of the file.
+In some cases, these files may not exist by default, so you will have to create them after determining your terminal type. Here’s how you can see if your files exist and what to do if they don’t:
+1- Check if the File Exists
+First, check if the file exists. To do so, run these commands:
+open ~/.bash_profile
+or 
+open ~/.zshrc
+If it exists, simply edit the values above, and paste them into the file. Then press “Save.”
+2- If the Files aren’t Found, Create Them
+Use the following commands to create the right file:
+touch ~/.bash_profile
+or 
+touch ~/.zshrc
+After you’ve created the file, simply open it with the command above and add the values above to it.
+3. Load the File
+Once you are done, you will need to load the file with this command:
+source ~/.bash_profile
+or 
+source ~/.zshrc
+Read How to edit your bash profile for a detailed explanation,
+If you decided to skip this you can inject your values into the script directly (not secure)
+4. Execute the Script
+With the environment set up and the script loaded, you can execute the script using this line:
+pr [target branch]
+In some cases, you may get a permission denied error. If so, execute one of the following commands:
+chmod +x pr 
+or
+chmod +x path of the script.sh
+Enhance Your Workflow Precision
+With this simple batch automation, you can handle multiple minor pull requests at a greater capacity than ever before. This means greater workflow precision and less time spent in manual processes.
+Traditionally, more requests equal more time to initiate the process for review and merging. With this script, we’ve drastically reduced this aspect of production time with this script — and now you can implement those same changes for your own system.
