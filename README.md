@@ -2,15 +2,13 @@
 
 ## Automating pull request creation with Jira projects from the command line. 👨🏻‍💻➡️🌐✅
 
-Pull requests are one of the most common actions in the day-to-day work of a developer. Pull requests manage communication, edits, and debugging of requested changes so that they can be merged into a more significant project. Sometimes you receive feedback and learn something new; other times, you add something of value to the reviewer to allow them to learn from it.
+Creating a pull request manually is a time-consuming task. To do so, TWM Engineering follows a process of creating a Github branch with the same name as the ticket name and number on Jira.
 
-Creating a pull request manually is a time-consuming task. To do so, the mobile team at Seera group follows a process of creating a Github branch with the same name as the task id on Jira.
+For example, one our projecs on Jira is named fusion-commitments-mfe. Every story, bug, and subtask created has the prefix CRS-xxxxxx-CMT. (This will be different for different teams within TotalWine).
 
-For example, our Android project on Jira is named Apollo. Every task or story created has the prefix APL to ensure it’s quickly identified.
+So a typical ticket number will look like: CRS-\[auto increment number\]-\[project-name\]-\[description\] when creating branches in Jira.
 
-So a typical task id will look like this: APL-\[auto increment number\] after creating the branch.
-
-Once you’ve completed the requested changes, to push it to Github you have to:
+When you’ve completed the ticket acceptance requirements , to push it to Github you have to:
 
 1.  Click create a pull request on the changed branch through Github
 2.  Select the target branch you want to merge the changes into
@@ -20,11 +18,6 @@ Once you’ve completed the requested changes, to push it to Github you have to:
 6.  Add the reviewers of the pull request and finally
 7.  Add a label to categorize your pull request as a bug, task, release task..etc.
 
-Those seven steps, over and over again. You can see how it can be mind-numbing and reduce creativity and productivity.
-
-Now imagine all the steps above can be automated with one line!🤯
-
-In this article, we’ll share this script with you and explain how to use it for your own processes.
 
 For this batch script automation, we will be using GitHub CLI called [hub](https://github.com/github/hub) for extra git command lines, and [jq](https://stedolan.github.io/jq/) for parsing the response from JIRA API.  
 So before you can use the script, you’ll need to install both. Click the links below to learn how to install them quickly:
@@ -124,9 +117,3 @@ chmod +x pr
 or
 chmod +x path of the script.sh
 ```
-
-
-**Enhance Your Workflow Precision  
-**With this simple batch automation, you can handle multiple minor pull requests at a greater capacity than ever before. This means greater workflow precision and less time spent in manual processes.
-
-Traditionally, more requests equal more time to initiate the process for review and merging. With this script, we’ve drastically reduced this aspect of production time with this script — and now you can implement those same changes for your own system.
