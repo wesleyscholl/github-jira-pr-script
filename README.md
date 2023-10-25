@@ -1,5 +1,6 @@
 # github-jira-pr-script
-Automating pull request creation with Jira projects from the command line.
+
+## Automating pull request creation with Jira projects from the command line. 👨🏻‍💻➡️🌐✅
 
 Pull requests are one of the most common actions in the day-to-day work of a developer. Pull requests manage communication, edits, and debugging of requested changes so that they can be merged into a more significant project. Sometimes you receive feedback and learn something new; other times, you add something of value to the reviewer to allow them to learn from it.
 
