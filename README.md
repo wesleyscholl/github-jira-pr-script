@@ -2,7 +2,7 @@
 
 ## Automating pull request creation with Jira projects from the command line. 👨🏻‍💻➡️🌐✅
 
-Creating a pull request manually is a time-consuming task. To do so, TWM Engineering follows a process of creating a Github branch with the same name as the ticket name and number on Jira.
+Creating a pull request manually is a time-consuming task. TotalWine Engineering follows a process to create Github branches with the same name as the ticket name and number on Jira.
 
 For example, one our projecs on Jira is named fusion-commitments-mfe. Every story, bug, and subtask created has the prefix CRS-xxxxxx-CMT. (This will be different for different teams within TotalWine).
 
