@@ -2,18 +2,27 @@
 
 Creating a pull request manually is a time-consuming task. TotalWine Engineering follows a process to create Github branches with the same name as the ticket name and number on Jira.
 
-A typical ticket number will look like: CRS-\<number_auto_incremented\>-\<project_name\>-\<description\> when creating branches in Jira. (Example - `CRS-41964-NSS-2.1-Disable-Free-State-data-field`) This may be different depending on which team you are on.
+A typical ticket number will look like: CRS-\<number_auto_incremented\>-\<project_name\>-\<description\> when creating branches in Jira. (Example - `CRS-41964-NSS-2.1-Disable-Free-State-data-field`) This may be different depending on the team.
 
 # What this script automates:
 
-1.  Clicking create a pull request on the changed branch through Github
-2.  Selecting the target branch you want to merge the changes into
-3.  Copying the task name of the Jira ticket as the title of your pull request
-4.  Adding the link of the Jira ticket to your pull request description
-5.  Describing your changes and the implementation details
-6.  Adding the reviewers of the pull request and finally
-7.  Adding screenshots or videos of the UI changes/functionality (Optional)
-8.  Adding a label to categorize your pull request as a bug, task, release task, etc. (Optional)
+1.  Pushing local commits to remote branch with `git push`
+2.  Clicking create a pull request from the changed branch in Github
+3.  Selecting the target branch to merge changes into
+4.  Copying the story name of the Jira ticket as the title of the pull request
+5.  Adding the link of the Jira ticket to the pull request description
+6.  Adding a description from the Jira ticket to the pull request
+7.  Adding the acceptance criteria from the Jira ticket to the pull request 
+8.  Adding the reviewers of the pull request
+9.  Assigning the pull request owner as the assignee to the pull request
+10.  Adding all Jira comments from the associated ticket
+11.  Adding all Jira subtasks and subtask statuses, checked checkbox if completed
+12.  Adding a section with the team name, sprint, and epic
+13.  Adding steps to reproduce if they exist, otherwise N/A
+14.  Adding the updates section, a list of all commits with hashes and commit descriptions
+15.  Adding a code changes section with the git diff of all code modifications
+16.  Adding screenshots for UI modifications or functionality improvements (Optional)
+17.  Adding a label to categorize your pull request as a Story, Bug, QA, UAT, etc. (Optional)
 
 # Requirements
 To use the pull request script, you’ll need to install, create, or configure the following:
