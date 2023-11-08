@@ -18,7 +18,7 @@ A typical ticket number will look like: CRS-\<number_auto_incremented\>-\<projec
 # Requirements
 To use the pull request script, you’ll need to install, create, or configure the following:
 
-| Name | Description | Link or Location |
+| Name | Description | Link, Location, Command |
 | --- | --- | --- |
 | `hub` | GitHub CLI - Adds additional GitHub commands to access the API from the CLI. | [hub](https://hub.github.com/) |
 | `jq` | Command-line JSON processor - Parsing the response data from the Jira API. | [jq](https://stedolan.github.io/jq/download/) |
