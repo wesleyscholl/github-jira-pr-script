@@ -133,8 +133,8 @@ fi
 echo "" >> PR_MESSAGE
 
 # Build PR description - Change location if this does not exist in repo
-# cat .github/pull_request_template >> PR_MESSAGE
-cat ../pull_request_template >> PR_MESSAGE
+cat .github/pull_request_template >> PR_MESSAGE
+# cat ../pull_request_template >> PR_MESSAGE
 
 # Checking for comments
 if [ $comments ]
