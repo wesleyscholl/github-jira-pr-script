@@ -1,8 +1,6 @@
 # github-jira-pr-script - Automating pull request creation with Jira projects from the command line 👨🏻‍💻➡️🌐✅
 
-Creating a pull request manually is a time-consuming task. TotalWine Engineering follows a process to create Github branches with the same name as the ticket name and number on Jira.
-
-A typical ticket number will look like: CRS-\<number_auto_incremented\>-\<project_name\>-\<description\> when creating branches in Jira. (Example - `CRS-41964-NSS-2.1-Disable-Free-State-data-field`) This may be different depending on the team.
+Manually creating a GitHub pull request is a time-consuming task. Save time using this script.
 
 # What this script automates:
 
@@ -25,7 +23,6 @@ A typical ticket number will look like: CRS-\<number_auto_incremented\>-\<projec
 17.  Adding a label to categorize your pull request as a Story, Bug, QA, UAT, etc. (Optional)
 
 # Requirements
-To use the pull request script, you’ll need to install, create, or configure the following:
 
 | Name | Description | Link, Location, or Command |
 | --- | --- | --- |
@@ -184,7 +181,9 @@ As a user,I want the "Free Goods State" data field to be disabled and  set to "N
 ![Screen Shot](https://api.media.atlassian.com/file/f6bef5ab-a4b5-4e28-ab32-2a197b719c42/binary?token=eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI5NTI3ZWFkMC1mMDFjLTQ3NjMtYTdlNC04Y2UxNzk1ZWM0NTIiLCJhY2Nlc3MiOnsidXJuOmZpbGVzdG9yZTpmaWxlOmY2YmVmNWFiLWE0YjUtNGUyOC1hYjMyLTJhMTk3YjcxOWM0MiI6WyJyZWFkIl19LCJleHAiOjE2OTk0NzIwODcsIm5iZiI6MTY5OTQ3MTQ4N30.2gBkYLD_8Y-_pEsraxRH69bnxe0E4WlB3J25wE32k70&client=9527ead0-f01c-4763-a7e4-8ce1795ec452&dl=true&name=Screenshot+2023-11-08+at+2.09.51+PM.png)
 ```
 
-## When you are satisfied with the PR, uncomment these lines in `pr_script.sh` and run `pr <branch>`.
+## When you are satisfied with the PR
+
+**Uncomment these lines in `pr_script.sh` and run `pr <branch>`.**
 ```bash
 # if [ -z "$label" ]; then
 # 	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign
