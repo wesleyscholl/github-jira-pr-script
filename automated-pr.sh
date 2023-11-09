@@ -31,7 +31,7 @@ echo $base_branch
 title=$(echo $response | jq -r '.fields.summary' | sed 's/^[ ]*//;s/[ ]*$//')
 type=$(echo $response | jq -r '.fields.issuetype.name')
 desc=$(echo $response | jq -r '.fields.description')
-comments=$(echo $response | jq -r '.fields.comment.comments[] | ("- " ) + .body')
+comments=$(echo $response | jq -r '.fields.comment.comments[] | ("- " ) + .body | split("!")[0]')
 ssid=$(echo $response | jq -r '.fields.attachment[0].id')
 ssid1=$(echo $response | jq -r '.fields.attachment[1].id')
 ssid2=$(echo $response | jq -r '.fields.attachment[2].id')
