@@ -1,26 +1,37 @@
 # github-jira-pr-script - Automating pull request creation with Jira projects from the command line 👨🏻‍💻➡️🌐✅
 
-Manually creating a GitHub pull request is a time-consuming task. Save time using this script.
+Manually creating a GitHub pull request is a time-consuming task. Save time using this shell script.
 
+## Table of Contents
+* [What this script automates](#what-this-script-automates)
+* [Requirements](#requirements)
+* [Mac Installation](#mac-installation)
+* [Windows Installation](#windows-installation)
+* [Before submitting an actual Pull Request](#before-submitting-an-actual-pull-request)
+* [When you are ready to submit the Pull Request](#when-you-are-ready-to-submit-the-pull-request)
+* [Troubleshooting](#troubleshooting)
+  
 ## What this script automates:
 
-1.  Pushing local commits to remote branch with `git push`
-2.  Clicking create a pull request from the changed branch in Github
-3.  Selecting the target branch to merge changes into
-4.  Copying the story name of the Jira ticket as the title of the pull request
-5.  Adding the link of the Jira ticket to the pull request description
-6.  Adding a description from the Jira ticket to the pull request
-7.  Adding the acceptance criteria from the Jira ticket to the pull request 
-8.  Adding the reviewers of the pull request
-9.  Assigning the pull request owner as the assignee to the pull request
-10.  Adding all Jira comments from the associated ticket
-11.  Adding all Jira subtasks and subtask statuses, checked checkbox if completed
-12.  Adding a section with the team name, sprint, and epic
-13.  Adding steps to reproduce if they exist, otherwise N/A
-14.  Adding the updates section, a list of all commits with hashes and commit descriptions
-15.  Adding a code changes section with the git diff of all code modifications
-16.  Adding screenshots for UI modifications or functionality improvements (Optional)
-17.  Adding a label to categorize your pull request as a Story, Bug, QA, UAT, etc. (Optional)
+| Name | Description |
+| --- | --- | 
+| Git Commit Push | Pushing local commits to remote branch with `git push`. | 
+| PR Creation | Clicking create a pull request from the feature branch in Github. | 
+| Target Merge Branch | Selecting the target branch to merge changes into. | 
+| PR Title | Copying the story name of the Jira ticket as the title of the pull request. | 
+| Jira Ticket Link | Adding the link of the Jira ticket to the pull request description. | 
+| Jira Ticket Description | Adding a description and acceptance criteria from the Jira ticket to the pull request. | 
+| PR Reviewers | Adding the reviewers of the pull request. | 
+| PR Assignee | Assigning the pull request owner as the assignee to the pull request. | 
+| Jira Ticket Comments | Adding all Jira comments from the associated ticket. | 
+| Jira Ticket Subtasks | Adding all Jira subtasks and subtask statuses, checked checkbox if completed. |
+| Jira Team, Sprint & Epic | Adding a section with the team name, sprint, and epic. |
+| Jira Steps to Reproduce | Adding steps to reproduce if they exist, otherwise N/A. |
+| GitHub Commit Hashes | Adding the updates section, a list of all commits with hashes and commit descriptions. |
+| GitHub Diff | Adding a code changes section with the git diff of all code modifications. |
+| Jira Ticket Screenshots | Adding screenshots for UI modifications or functionality improvements. (Optional - 3 Maximum) |
+| GitHub PR Labels | Adding a label to categorize your pull request as a Story, Bug, QA, UAT, etc. (Optional) |
+ 
 
 ## Requirements
 
@@ -32,7 +43,7 @@ Manually creating a GitHub pull request is a time-consuming task. Save time usin
 | `Jira API Token` | API tokens can authenticate scripts or other process with Atlassian cloud products. | [Create a JIRA Token](https://id.atlassian.com/manage-profile/security/api-tokens) |
 | `<your_pr_script>.sh` | Shell file that automates creating pull requests using Jira ticket data, images, and other details. | Static location on your local computer - `touch pr_script.sh` |
 | `Environment Variables` | Environment variables that are stored in the terminal/bash/zsh configuration. Includes: `<pr_script>.sh` path alias, `jira_url`, `jira_access_token`, `github_author` and `github_reviewers` | `~/.bash_profile` or `~/.zshrc` - open with `open ~/.bash_profile` or `open ~/.zshrc` - then load with `source ~/.bash_profile` or `source ~/.zshrc` |
-| Git Bash - ***Required for Windows** | Git Bash provides a UNIX command line emulator for windows which can be used to run Git, shell commands, and much more. | [Download Git Bash](https://gitforwindows.org/) |
+| `Git Bash` ***Required for Windows** | Git Bash provides a UNIX command line emulator for windows which can be used to run Git, shell commands, and much more. | [Download Git Bash](https://gitforwindows.org/) |
 
 ## Mac Installation
 
@@ -135,10 +146,6 @@ export github_reviewers=naimish1083,KevinArce98,kareewongsagul
 pr <target_branch>
 ```
 
-## Example Created Pull Request
-<img width="1270" alt="Screenshot 2023-11-08 at 2 19 30 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/42a4f8fc-6958-4f5b-8e07-0415698374c4">
-<img width="690" alt="Screenshot 2023-11-08 at 3 44 28 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/1813a8bf-1766-4665-8c9d-c46616e21715">
-
 <br>
 </details>
 <br><br>
@@ -146,49 +153,64 @@ pr <target_branch>
 
 ## Windows Installation
 
-<!-- <br>
+<br>
 <details>
 <summary>Windows Instructions</summary>
-<br><br> -->
-##
-##### 1. Scoop is required to install `hub`, if it's not installed on your machine open a powershell window and run:
+<br><br>
+
+#### 1. Scoop is required to install `hub`, if it's not installed on your machine open a powershell window and run:
 ##
 ```powershell
 > Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 > irm get.scoop.sh | iex
 ```
+<img width="984" alt="Screenshot 2023-11-09 at 12 06 55 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/fd09e9d4-1f1d-4740-a450-a44b29e2e4b6">
+
 ##
-##### 2. Then install `hub`:
+#### 2. Then install `hub`:
 ##
 ```powershell
 > scoop install hub
 ```
 ##
-##### 3. Use scoop to install `jq`: 
+#### 3. Use scoop to install `jq`: 
 ##
 ```powershell
 > scoop install jq
 ```
+<img width="942" alt="Screenshot 2023-11-09 at 12 10 34 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/3a54db81-8d0a-4d49-a443-c2f308db150e">
 
 ##
-##### 4. [Create A GitHub Personal Access Token](https://github.com/settings/tokens) with `repo` permissions. Copy this token and keep for use later.
+#### 4. [Create A GitHub Personal Access Token](https://github.com/settings/tokens) with `repo` permissions. Copy this token and keep for use later.
 ##
 <img width="496" alt="Screenshot 2023-11-08 at 2 23 56 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/111e80a5-89fd-48c2-8214-69d3c8073eb9">
 
 ##
-##### 5. Copy the `pr_script.sh` file from the `github-jira-pr-script` repo or create a new file in your C:/Users/<your_username>/ folder:
-##
-```powershell
-> New-Item -Type File -Path pr_script.sh
-```
-##
-##### 6. Install Git Bash from the Software Center App:
+#### 5. Install Git Bash from the Software Center App:
 ##
 Click Search on the Microsoft Toolbar and type in `software center`.
 
+![Screenshot 2023-11-10 at 1 29 12 PM](https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/22e47f35-ed18-4079-8b2a-06a2a8ab0498)
+
 Open the application and click on Git Bash to install.
+
+![Screenshot 2023-11-10 at 1 27 36 PM](https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/deb69ae4-7658-4782-bbab-fe5b81763d20)
+
 ##
-##### 7. Open a git bash window and set the hub configuration using the following commands:
+#### 6. Copy the `pr_script.sh` file from the `github-jira-pr-script` repo or create a new file in your C:/Users/<your_username>/ folder:
+##
+Powershell:
+```powershell
+> New-Item -Type File -Path pr_script.sh
+```
+
+Or Git Bash.
+```bash
+touch pr_script.sh
+```
+
+##
+#### 7. Open a git bash window and set the hub configuration using the following commands:
 ##
 Ensure you update `<your_github_username>` with your github username and `<your_github_personal_access_token>` with your github personal access token.
 
@@ -197,17 +219,18 @@ git config --global hub.protocol https
 git config --global hub.user <your_github_username>
 git config --global hub.token <your_github_personal_access_token>
 ```
+<img width="487" alt="Screenshot 2023-11-09 at 12 23 07 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/5f656c4c-f252-4cd3-b74b-324cd1af026e">
 
 ##
-##### 8. Create a JIRA Token
+#### 8. Create a JIRA Token
 ##
-Also copy this token and keep for use later. [Create a JIRA Token](https://id.atlassian.com/manage-profile/security/api-tokens).
+[Create a JIRA Token](https://id.atlassian.com/manage-profile/security/api-tokens) and copy for use later. 
 
 <img width="413" alt="Screenshot 2023-11-08 at 1 00 27 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/2d6bf181-3a2f-4530-a419-4df0608e8eaf">
 <img width="427" alt="Screenshot 2023-11-08 at 1 01 07 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/4b177f2d-d38b-4481-8158-d7251eea7951">
 
 ##
-##### 9. Create and open your bash configuration, `~/.bash_profile`.
+#### 9. Create and open your bash configuration, `~/.bash_profile`.
 ##
 In the same directory:
 
@@ -237,28 +260,28 @@ export jira_access_token=wscholl@totalwine.com:AT***...***0A
 export github_author=wesleyscholl
 export github_reviewers=naimish1083,KevinArce98,kareewongsagul
 ```
+
+****Make sure you copy the full Jira token string into the `.bash_profile` configuration.***
 ##
-##### 10. Load the `.bash_profile` configuration with the source command:
+#### 10. Load the `.bash_profile` configuration with the source command:
 ##
   ```bash
   source ~/.bash_profile
   ```
 ##
-##### 11. You can now execute the script to automate your pull request creation. Target branch is optional, defaults to `develop`.
+#### 11. You can now execute the script to automate your pull request creation. Target branch is optional, defaults to `develop`.
 ##
 ```bash
 pr <target_branch>
 ```
-
+****Only run the `pr` command from a Total Wine Labs git repository feature branch, otherwise it will fail.***
 <br>
 </details>
 <br><br>
 
-## Final Thoughts
+## Before submitting an actual Pull Request
 
-##### Before submitting an actual Pull Request
-
-The pull request function has been commented out to ensure that the pull request looks good before creating a live Pull Request.
+The pull request function has been commented out to ensure that the pull request looks good before creating a live Pull Request. The script will output text similar to the example below.
 
 **Example Script Pull Request Output:**
 
@@ -331,11 +354,22 @@ As a user,I want the "Free Goods State" data field to be disabled and  set to "N
 # 	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign -l $label
 # fi
 ```
+***Once the script completes, it will open the newly created PR in the default web browser. It should look like the following example.**
 
+## Example Created Pull Request
+<img width="1270" alt="Screenshot 2023-11-08 at 2 19 30 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/42a4f8fc-6958-4f5b-8e07-0415698374c4">
+<img width="690" alt="Screenshot 2023-11-08 at 3 44 28 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/1813a8bf-1766-4665-8c9d-c46616e21715">
 
+##
 ## Troubleshooting
 
-##### command not found: pr_script.sh
+#### fatal: not a git repository (or any of the parent directories): .git
+##
+![Screenshot 2023-11-10 at 1 56 17 PM](https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/e9cc37fd-69a7-412d-9fdc-dd78f6676de7)
+
+This error message displays when the pr script is run from a non .git repository folder. Run the `pr` command from the feature branch within a Total Wine Labs repository.
+##
+#### command not found: pr_script.sh
 ##
 If you see this message, the environment variables haven't been loaded or the alias syntax is incorrect.
 
@@ -353,7 +387,7 @@ or
 source ~/.zshrc
 ```
 ##
-##### Forbidden HTTP 403 - Resource protected by organization SAML enforcement. You must grant your Personal Access token access to this organization.
+#### Forbidden HTTP 403 - Resource protected by organization SAML enforcement. You must grant your Personal Access token access to this organization.
 ##
 This means that the GitHub personal access token (PAT) needs authorization to access the TotalWineLabs organization. 
 
@@ -366,7 +400,7 @@ This means that the GitHub personal access token (PAT) needs authorization to ac
 <img width="802" alt="Screenshot 2023-11-08 at 2 18 12 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/bc249f31-ead9-4aa9-b01a-b17abf3167dd">
 
 ##
-##### Permission Denied Error
+#### Permission Denied Error
 ##
 If you receive this error, execute one of the following commands:
 
@@ -378,7 +412,7 @@ or
 chmod +x path of the script.sh
 ```
 ##
-##### Terminal/bash/zsh config file not found
+#### Terminal/bash/zsh config file not found
 ##
 Use the following commands to create the file:
 ```bash
@@ -390,7 +424,7 @@ touch ~/.zshrc
 ```
 After you’ve created the file, open it with `open ~/.bash_profile` or `open ~/.zshrc` and add the environment variables to it.
 ##
-##### Cannot execute: required file not found error
+#### Cannot execute: required file not found error
 ##
 
 If you see this message, the `.bash_profile` alias is not configured properly.
