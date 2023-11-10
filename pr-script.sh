@@ -12,11 +12,23 @@ branch="${base_branch:0:9}"
 prebranch="${base_branch:0:3}"
 echo $prebranch
 
-# Requesting the ticket data from Jira API
-response=$(curl -s "${jira_url}/rest/api/2/issue/$branch" -u "$jira_access_token" | sed 's#\\n##g;s#\\#\\\\#g')
+# Check operating system then Request ticket data from Jira API
+response=
+echo $OSTYPE
+if [[ $OSTYPE =~ ^darwin ]]
+then
+	echo "Mac OSX Operating System"
+    response=$(curl -s "${jira_url}/rest/api/2/issue/$branch" -u "$jira_access_token" | sed 's#\\n##g;s#\\#\\\\#g')
+elif [[ $OSTYPE == msys ]]
+then
+	echo "Windows Operating System"
+    response=$(curl -s "${jira_url}/rest/api/2/issue/$branch" -u "$jira_access_token")
+else
+    echo "Operating system not supported"
+	exit 1
+fi
 
-# Setting head branch to merge PR into - Pass a parameter after pr - Ex. 'pr develop' or 'pr master'
-# Defaults to develop branch
+# Setting head branch to merge PR into - Pass a parameter after pr - Ex. 'pr develop' or 'pr master', defaults to develop branch
 if [ -z "$1" ]
   then
     echo "No head branch argument supplied"
@@ -30,24 +42,45 @@ echo $base_branch
 # base_branch='develop'
 # base_branch='master'
 
-# Parsing Jira ticket information
-title=$(echo $response | jq -r '.fields.summary' | sed 's/^[ ]*//;s/[ ]*$//')
-type=$(echo $response | jq -r '.fields.issuetype.name')
-desc=$(echo $response | jq -r '.fields.description')
-comments=$(echo $response | jq -r '.fields.comment.comments[] | ("- " ) + .body | split("!")[0]')
-ssid=$(echo $response | jq -r '.fields.attachment[0].id')
-ssid1=$(echo $response | jq -r '.fields.attachment[1].id')
-ssid2=$(echo $response | jq -r '.fields.attachment[2].id')
-subtasks=$(echo $response | jq -r '.fields.subtasks[] | if .fields.status.name == "Done" then ("- [x] " ) else ("- [ ] " ) end + .fields.summary + (" - ") + .fields.status.name')
-ssidarr=$(echo $response | jq '[.fields.attachment[] | .id]')
-attlength=$(echo $response | jq '.fields.attachment | length')
-epic=$(echo $response | jq -r '.fields.parent.fields.summary')
-reproduce=$(echo $response | jq -r '.fields.customfield_13380')
-team=$(echo $response | jq -r '.fields.customfield_13131.value')
-sprint=$(echo $response | jq -r '.fields.customfield_11505[0].name')
+# Assign variables 
+title=
+type=
+desc=
+comments=
+ssid=
+ssid1=
+ssid2=
+subtasks=
+attlength=
+epic=
+reproduce=
+team=
+sprint=
+gitdiff=
 
-# git diff - code changes
-gitdiff=$(git diff HEAD^ HEAD)
+# Check for JIRA API response and parse Jira ticket data
+if [ -z "$response" ]
+  then
+    echo "Error fetching data from Jira API"
+	exit 1
+else
+	title=$(echo $response | jq -r '.fields.summary' | sed 's/^[ ]*//;s/[ ]*$//')
+	type=$(echo $response | jq -r '.fields.issuetype.name')
+	desc=$(echo $response | jq -r '.fields.description')
+	comments=$(echo $response | jq -r '.fields.comment.comments[] | ("- " ) + .body | split("!")[0]')
+	# Screenshot ids
+	ssid=$(echo $response | jq -r '.fields.attachment[0].id')
+	ssid1=$(echo $response | jq -r '.fields.attachment[1].id')
+	ssid2=$(echo $response | jq -r '.fields.attachment[2].id')
+	subtasks=$(echo $response | jq -r '.fields.subtasks[] | if .fields.status.name == "Done" then ("- [x] " ) else ("- [ ] " ) end + .fields.summary + (" - ") + .fields.status.name')
+	attlength=$(echo $response | jq '.fields.attachment | length')
+	epic=$(echo $response | jq -r '.fields.parent.fields.summary')
+	reproduce=$(echo $response | jq -r '.fields.customfield_13380')
+	team=$(echo $response | jq -r '.fields.customfield_13131.value')
+	sprint=$(echo $response | jq -r '.fields.customfield_11505[0].name')
+	# git diff - code changes
+	gitdiff=$(git diff HEAD^ HEAD)
+fi
 
 # Check for steps to reproduce
 if [[ "$reproduce" == null ]];
@@ -84,30 +117,35 @@ if [[ $ssid  == null ]]
 else
 attres=$(curl -I "${jira_url}/rest/api/3/attachment/content/${ssid}" -u "$jira_access_token")
 fi
-attres1=''
+
 if [[ $ssid1 == null ]]
   then
     echo "No 2nd attachment"
 else
+	attres1=''
 	attres1=$(curl -I "${jira_url}/rest/api/3/attachment/content/${ssid1}" -u "$jira_access_token")
 fi
-attres2=''
+
 if [[ $ssid2 == null ]]
   then
     echo "No 3rd attachment"
 else
+	attres2=''
 	attres2=$(curl -I "${jira_url}/rest/api/3/attachment/content/${ssid2}" -u "$jira_access_token")
 fi
 
-# Prepare the pull request information
-# GitHub PR Reviewers
-echo $github_reviewers
-# GitHub PR Assignee
-assign="${github_author}"
-reviewers="${github_reviewers}"
-echo $reviewers
+# Prepare the pull request information, GitHub PR Reviewers and GitHub PR Assignee
+if [ -z $github_reviewers ]
+  then
+    echo "No GitHub reviewers configured"
+else
+	assign="${github_author}"
+	reviewers="${github_reviewers}"
+	echo $github_author
+	echo $reviewers
+fi
 
-# Prepare the label of the pull request - Add second command line input for labels
+# Prepare the label of the pull request - Possibly add second command line input for labels
 if [ "$type" = "Story" ]; then
 	label='Story'
 fi
@@ -127,7 +165,7 @@ if [[ "$base_branch" == *"develop"* ]]; then
 	fi
 fi
 
-# Parse the url headers for actual screenshot urls
+# Check and parse the url headers for actual screenshot urls
 screenshot=${attres##*location: }
 screenshot=${screenshot%%vary:*}
 screenshot1=${attres1##*location: }
@@ -149,19 +187,15 @@ cat .github/pull_request_template >> PR_MESSAGE
 # cat ../pull_request_template >> PR_MESSAGE
 
 # Checking for comments
-if [ $comments ]
+if [[ "$comments" == null ]]
   then
-	$comments
-  else
-comments=$(echo "* No comments")
+	comments=$(echo "* No comments")
 fi
 
 # Checking for subtasks
-if [ $subtasks ]
+if [[ "$subtasks" == null ]]
   then
-	$subtasks
-  else
-subtasks=$(echo "* No Subtasks")
+	subtasks=$(echo "* No Subtasks")
 fi
 
 # Add the description, comments, subtasks, team, sprint, epic, and steps to reproduce 
@@ -182,16 +216,26 @@ $subtasks
 - $reproduce" > TMP
 sed -i -e '/as needed./r TMP' PR_MESSAGE
 
-# Delete unused lines from pull_request_template
-sed -i '' '/Replace this with/d' PR_MESSAGE
-sed -i '' '/Put your Ticket/d' PR_MESSAGE
+# Delete unused lines from pull_request_template - Mac and Windows specific commands & logic
+sed -i '' '/Replace this with a short description.  Delete sub sections as needed./d' PR_MESSAGE
+sed -i '' '/Put your Ticket Title Here/d' PR_MESSAGE
+
+if [[ $OSTYPE =~ ^darwin ]]
+then
+	sed -i '' '/Replace this with a short description.  Delete sub sections as needed./d' PR_MESSAGE
+	sed -i '' '/Put your Ticket Title Here/d' PR_MESSAGE
+elif [[ $OSTYPE == msys ]]
+then
+	sed -i '/Replace this with a short description.  Delete sub sections as needed./d' PR_MESSAGE
+	sed -i '/Put your Ticket Title Here/d' PR_MESSAGE
+fi
 
 # Append the commit messages and hashes in the description
 git log $full_branch --not $(git for-each-ref --format='%(refname)' refs/heads/ | grep -v "refs/heads/$full_branch") --oneline > TMP
 sed -i -e '/list of updates/r TMP' PR_MESSAGE
 echo PR_MESSAGE
 
-# Add screenshots
+# Add screenshots - Possibly add more screenshots in the future 
 if [ -z $screenshot ]
   then
 	echo "* No Screenshots" > TMP
