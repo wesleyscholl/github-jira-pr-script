@@ -14,7 +14,6 @@ echo $prebranch
 
 # Check operating system then Request ticket data from Jira API
 response=
-echo $OSTYPE
 if [[ $OSTYPE =~ ^darwin ]]
 then
 	echo "Mac OSX Operating System"
@@ -67,7 +66,7 @@ else
 	title=$(echo $response | jq -r '.fields.summary' | sed 's/^[ ]*//;s/[ ]*$//')
 	type=$(echo $response | jq -r '.fields.issuetype.name')
 	desc=$(echo $response | jq -r '.fields.description')
-	comments=$(echo $response | jq -r '.fields.comment.comments[] | ("- " ) + .body | split("!")[0]')
+	comments=$(echo $response | jq -r '.fields.comment.comments[] | ("- " ) + .body | split("!")[0] | gsub("[\\n\\t]"; "")')
 	# Screenshot ids
 	ssid=$(echo $response | jq -r '.fields.attachment[0].id')
 	ssid1=$(echo $response | jq -r '.fields.attachment[1].id')
@@ -85,28 +84,24 @@ fi
 # Check for steps to reproduce
 if [[ "$reproduce" == null ]];
 then
-    echo "No steps to reproduce - N/A"
 	reproduce="N/A"
 fi
 
 # Check for sprint 
 if [[ "$sprint" == null ]];
 then
-    echo "No sprint assigned"
 	sprint="No sprint assigned"
 fi
 
 # Check for epic
 if [[ "$epic" == null ]];
 then
-    echo "No epic assigned"
 	epic="No epic assigned"
 fi
 
 # Check for team
 if [[ "$team" == null ]];
 then
-    echo "No team - Unassigned"
 	team="No team - Unassigned"
 fi
 
@@ -141,8 +136,6 @@ if [ -z $github_reviewers ]
 else
 	assign="${github_author}"
 	reviewers="${github_reviewers}"
-	echo $github_author
-	echo $reviewers
 fi
 
 # Prepare the label of the pull request - Possibly add second command line input for labels
@@ -165,13 +158,30 @@ if [[ "$base_branch" == *"develop"* ]]; then
 	fi
 fi
 
-# Check and parse the url headers for actual screenshot urls
-screenshot=${attres##*location: }
-screenshot=${screenshot%%vary:*}
-screenshot1=${attres1##*location: }
-screenshot1=${screenshot1%%vary:*}
-screenshot2=${attres2##*location: }
-screenshot2=${screenshot2%%vary:*}
+# Check and parse Jira url headers for actual screenshot urls
+if [ -z "$attres" ]
+then
+    echo "Error fetching url for screenshot #1 from Jira API"
+else
+	screenshot=${attres##*location: }
+	screenshot=${screenshot%%vary:*}
+fi
+
+if [ -z "$attres1" ]
+then
+    echo "Error fetching url for screenshot #2 from Jira API"
+else
+	screenshot1=${attres1##*location: }
+	screenshot1=${screenshot1%%vary:*}
+fi
+
+if [ -z "$attres2" ]
+then
+    echo "Error fetching url for screenshot #3 from Jira API"
+else
+	screenshot2=${attres2##*location: }
+	screenshot2=${screenshot2%%vary:*}
+fi
 
 # Add PR title and # body line
 if [ "$title" != "null" ]; then
