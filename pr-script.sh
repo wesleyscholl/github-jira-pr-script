@@ -217,9 +217,6 @@ $subtasks
 sed -i -e '/as needed./r TMP' PR_MESSAGE
 
 # Delete unused lines from pull_request_template - Mac and Windows specific commands & logic
-sed -i '' '/Replace this with a short description.  Delete sub sections as needed./d' PR_MESSAGE
-sed -i '' '/Put your Ticket Title Here/d' PR_MESSAGE
-
 if [[ $OSTYPE =~ ^darwin ]]
 then
 	sed -i '' '/Replace this with a short description.  Delete sub sections as needed./d' PR_MESSAGE
