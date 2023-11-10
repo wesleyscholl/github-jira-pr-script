@@ -32,6 +32,7 @@ Manually creating a GitHub pull request is a time-consuming task. Save time usin
 | `Jira API Token` | API tokens can authenticate scripts or other process with Atlassian cloud products. | [Create a JIRA Token](https://id.atlassian.com/manage-profile/security/api-tokens) |
 | `<your_pr_script>.sh` | Shell file that automates creating pull requests using Jira ticket data, images, and other details. | Static location on your local computer - `touch pr_script.sh` |
 | `Environment Variables` | Environment variables that are stored in the terminal/bash/zsh configuration. Includes: `<pr_script>.sh` path alias, `jira_url`, `jira_access_token`, `github_author` and `github_reviewers` | `~/.bash_profile` or `~/.zshrc` - open with `open ~/.bash_profile` or `open ~/.zshrc` - then load with `source ~/.bash_profile` or `source ~/.zshrc` |
+| Git Bash - ***Required for Windows** | Git Bash provides a UNIX command line emulator for windows which can be used to run Git, shell commands, and much more. | [Download Git Bash](https://gitforwindows.org/) |
 
 ## Mac Installation
 
@@ -145,41 +146,50 @@ pr <target_branch>
 
 ## Windows Installation
 
-<br>
+<!-- <br>
 <details>
 <summary>Windows Instructions</summary>
-<br><br>
-
-##### Scoop is required to install `hub`, if it's not installed on your machine open a powershell window and run:
-
+<br><br> -->
+##
+##### 1. Scoop is required to install `hub`, if it's not installed on your machine open a powershell window and run:
+##
 ```powershell
 > Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 > irm get.scoop.sh | iex
 ```
-
-##### Then install `hub`:
-
+##
+##### 2. Then install `hub`:
+##
 ```powershell
 > scoop install hub
 ```
-
-##### Use scoop to install `jq`: 
-
+##
+##### 3. Use scoop to install `jq`: 
+##
 ```powershell
 > scoop install jq
 ```
 
-##### [Create A GitHub Personal Access Token](https://github.com/settings/tokens) with `repo` permissions. Copy this token and keep for use later.
+##
+##### 4. [Create A GitHub Personal Access Token](https://github.com/settings/tokens) with `repo` permissions. Copy this token and keep for use later.
+##
 <img width="496" alt="Screenshot 2023-11-08 at 2 23 56 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/111e80a5-89fd-48c2-8214-69d3c8073eb9">
 
-##### Copy the `pr_script.sh` file from the `github-jira-pr-script` repo or create a new file in your C:/Users/<your_username>/ folder:
-
+##
+##### 5. Copy the `pr_script.sh` file from the `github-jira-pr-script` repo or create a new file in your C:/Users/<your_username>/ folder:
+##
 ```powershell
 > New-Item -Type File -Path pr_script.sh
 ```
+##
+##### 6. Install Git Bash from the Software Center App:
+##
+Click Search on the Microsoft Toolbar and type in `software center`.
 
-##### Open a git bash window and set the hub configuration using the following commands:
-
+Open the application and click on Git Bash to install.
+##
+##### 7. Open a git bash window and set the hub configuration using the following commands:
+##
 Ensure you update `<your_github_username>` with your github username and `<your_github_personal_access_token>` with your github personal access token.
 
 ```bash
@@ -188,17 +198,17 @@ git config --global hub.user <your_github_username>
 git config --global hub.token <your_github_personal_access_token>
 ```
 
-
-##### Create a JIRA Token
-
+##
+##### 8. Create a JIRA Token
+##
 Also copy this token and keep for use later. [Create a JIRA Token](https://id.atlassian.com/manage-profile/security/api-tokens).
 
 <img width="413" alt="Screenshot 2023-11-08 at 1 00 27 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/2d6bf181-3a2f-4530-a419-4df0608e8eaf">
 <img width="427" alt="Screenshot 2023-11-08 at 1 01 07 PM" src="https://github.com/wesleyscholl/github-jira-pr-script/assets/128409641/4b177f2d-d38b-4481-8158-d7251eea7951">
 
-
-##### Create and open your bash configuration, `~/.bash_profile`.
-
+##
+##### 9. Create and open your bash configuration, `~/.bash_profile`.
+##
 In the same directory:
 
 ```bash
@@ -227,14 +237,15 @@ export jira_access_token=wscholl@totalwine.com:AT***...***0A
 export github_author=wesleyscholl
 export github_reviewers=naimish1083,KevinArce98,kareewongsagul
 ```
-
-##### Load the `.bash_profile` configuration with the source command:
+##
+##### 10. Load the `.bash_profile` configuration with the source command:
+##
   ```bash
   source ~/.bash_profile
   ```
-
-##### You can now execute the script to automate your pull request creation. Target branch is optional, defaults to `develop`.
-
+##
+##### 11. You can now execute the script to automate your pull request creation. Target branch is optional, defaults to `develop`.
+##
 ```bash
 pr <target_branch>
 ```
