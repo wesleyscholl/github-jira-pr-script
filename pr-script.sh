@@ -211,6 +211,7 @@ screenshot_count=$(echo $response | jq -r '.fields.attachment | length')
 
 for i in $(seq 0 $((screenshot_count - 1))); do
   ssid=$(echo $response | jq -r ".fields.attachment[$i].id")
+  att=$(echo $response | jq -r ".fields.attachment[$i]")
 
   if [[ $ssid == null ]]; then
     echo "No screenshot #$((i + 1))"
