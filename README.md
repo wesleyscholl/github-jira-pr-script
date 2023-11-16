@@ -25,12 +25,12 @@ Manually creating a GitHub pull request is a time-consuming task. Save time usin
 | PR Assignee | Assigning the pull request owner as the assignee to the pull request. | 
 | Jira Ticket Comments | Adding all Jira comments from the associated ticket. | 
 | Jira Ticket Subtasks | Adding all Jira subtasks and subtask statuses, checked checkbox if completed. |
-| Jira Team, Sprint & Epic | Adding a section with the team name, sprint, and epic. |
+| Jira Team, Sprint, Goal, Components & Epic | Adding a section with the team name, sprint, and epic. |
 | Jira Steps to Reproduce | Adding steps to reproduce if they exist, otherwise N/A. |
 | GitHub Commit Hashes | Adding the updates section, a list of all commits with hashes and commit descriptions. |
 | GitHub Diff | Adding a code changes section with the git diff of all code modifications. |
 | Jira Ticket Screenshots | Adding screenshots for UI modifications or functionality improvements. (Optional - 3 Maximum) |
-| GitHub PR Labels | Adding a label to categorize your pull request as a Story, Bug, QA, UAT, etc. (Optional) |
+| GitHub PR Labels | Adding labels to categorize pull requests as a Story, Bug, QA, UAT, etc. Also adds team labels - ex. Automation, NSS_Automation (Optional) |
  
 
 ## Requirements
