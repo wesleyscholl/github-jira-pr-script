@@ -141,7 +141,7 @@ fi
 
 # Determine the base label based on the base branch
 if [[ "$base_branch" != "develop" ]]; then
-  base_label="UAT/Production"
+  base_label="UAT/PROD"
 else
   base_label="QA"
 fi
