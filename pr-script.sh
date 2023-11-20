@@ -110,6 +110,13 @@ then
 	team="No team - Unassigned"
 fi
 
+# Check for goal
+if [[ "$goal" == null ]];
+then
+    echo "No Goal Assigned"
+	goal="No Goal Assigned"
+fi
+
 # Prepare the pull request information, GitHub PR Reviewers and GitHub PR Assignee
 if [ -z $github_reviewers ]
   then
@@ -132,14 +139,24 @@ if [ "$type" = "Bug" ] || [ "$type" = "Story bug" ]; then
 	label='BUG'
 fi
 
-# Adding UAT/Production or QA labels
-if [[ "$base_branch" == *"develop"* ]]; then
-	if [ -z "$label" ]; then
-		label='UAT/Production,'$type','$labels
-	else
-		label=$label',QA,'$labels
-	fi
+# Determine the base label based on the base branch
+if [[ "$base_branch" != "develop" ]]; then
+  base_label="UAT/Production"
+else
+  base_label="QA"
 fi
+
+# Update the label based on the base_label and existing labels
+if [[ -z "$label" ]]; then
+  label="$base_label,$type"
+elif [[ -z "$labels" ]]; then
+  label="$base_label,$label"
+else
+  label="$base_label,$label,$labels"
+fi
+
+# Remove any trailing commas
+label=${label%%,}
 
 # Add PR title and # body line
 if [ "$title" != "null" ]; then
@@ -230,8 +247,8 @@ for i in $(seq 0 $((screenshot_count - 1))); do
   fi
 done
 
-# Shorten the git diff to 2500 characters
-gitdiff=${gitdiff:0:2500}
+# Shorten the git diff to 3000 characters
+gitdiff=${gitdiff:0:3000}
 
 # Add the git diff with proper formatting
 echo '```' > TMP
@@ -245,7 +262,7 @@ sed -i -e '/list of code changes/r TMP' PR_MESSAGE
 
 # Print the PR_MESSAGE
 cat PR_MESSAGE
-
+echo $label
 # Create the pull request - Uncomment to create a live PR, comment to check PR formatting
 # if [ -z "$label" ]; then
 # 	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign
