@@ -67,6 +67,7 @@ else
 	title=$(echo $response | jq -r '.fields.summary' | sed 's/^[ ]*//;s/[ ]*$//')
 	type=$(echo $response | jq -r '.fields.issuetype.name')
 	desc=$(echo $response | jq -r '.fields.description')
+	# Need to update to remove unreadable comments 
 	comments=$(echo $response | jq -r '.fields.comment.comments[] | ("- " ) + .body | split("!")[0]')
 	subtasks=$(echo $response | jq -r '.fields.subtasks[] | if .fields.status.name == "Done" then ("- [x] " ) else ("- [ ] " ) end + .fields.summary + (" - ") + .fields.status.name')
 	attlength=$(echo $response | jq '.fields.attachment | length')
@@ -92,35 +93,44 @@ fi
 # Check for sprint 
 if [[ "$sprint" == null ]];
 then
-    echo "No sprint assigned"
-	sprint="No sprint assigned"
+    echo "No Sprint Assigned"
+	sprint="No Sprint Assigned"
 fi
 
 # Check for epic
 if [[ "$epic" == null ]];
 then
-    echo "No epic assigned"
-	epic="No epic assigned"
+    echo "No Epic Assigned"
+	epic="No Epic Assigned"
 fi
 
 # Check for team
 if [[ "$team" == null ]];
 then
-    echo "No team - Unassigned"
-	team="No team - Unassigned"
+    echo "No Team - Unassigned"
+	team="No Team - Unassigned"
 fi
 
 # Check for goal
-if [[ "$goal" == null ]];
+echo "Goal is: ============================="
+echo $goal
+if [ -z $goal ];
 then
     echo "No Goal Assigned"
 	goal="No Goal Assigned"
 fi
 
+# Check for component
+if [[ "$components" == null ]];
+then
+    echo "No Components Assigned"
+	components="No Components Assigned"
+fi
+
 # Prepare the pull request information, GitHub PR Reviewers and GitHub PR Assignee
 if [ -z $github_reviewers ]
   then
-    echo "No GitHub reviewers configured"
+    echo "No GitHub Reviewers Configured"
 else
 	assign="${github_author}"
 	reviewers="${github_reviewers}"
