@@ -193,7 +193,8 @@ if [[ "$subtasks" == null ]]
 	subtasks=$(echo "* No Subtasks")
 fi
 
-# Add the description, comments, subtasks, team, sprint, epic, and steps to reproduce 
+# Add the description, comments, subtasks, team, sprint, epic, and steps to reproduce
+# Need to check all for null variables
 echo "### Description
 $desc
 ##
