@@ -19,8 +19,8 @@ full_branch=$base_branch
 # branch -> TWM Jira Ticket Number
 branch="$ticket_number"
 # prebranch -> TWM Jira Ticket Prefix i.e. CRS-, DIG-, MOB-. Will need to be modified for DEVOPS-, INFRA-, etc.
-prebranch="${ticket_number:0:3}"
-echo $prebranch
+# prebranch="${ticket_number:0:3}"
+# echo $prebranch
 
 # Check for the presence of pull_request_template in .github/ folder
 if [ -e ".github/pull_request_template" ]; then
@@ -139,7 +139,7 @@ fi
 # Check for goal
 echo "Goal is: ============================="
 echo $goal
-if [ -z $goal ];
+if [[ -z $goal ]];
 then
     echo "No Goal Assigned"
 	goal="No Goal Assigned"
@@ -243,9 +243,12 @@ $subtasks
 - $reproduce" > TMP
 sed -i -e '/as needed./r TMP' PR_MESSAGE
 
-# Delete unused lines from pull_request_template - Mac and Windows specific commands & logic
-sed -i '' '/Replace this with a short description.  Delete sub sections as needed./d' PR_MESSAGE
-sed -i '' '/Put your Ticket Title Here/d' PR_MESSAGE
+# Delete unused lines from pull_request_template - Cross-platform commands & logic
+awk '!/Replace this with a short description.  Delete sub sections as needed./ && !/Put your Ticket Title Here/' PR_MESSAGE > TMP
+mv TMP PR_MESSAGE
+# Delete unused lines from pull_request_template - Cross-platform commands & logic
+awk '!/Replace this with a short description.  Delete sub sections as needed./ && !/Put your Ticket Title Here/' PR_MESSAGE > TMP
+mv TMP PR_MESSAGE
 
 if [[ $OSTYPE =~ ^darwin ]]
 then
