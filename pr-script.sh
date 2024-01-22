@@ -3,14 +3,39 @@ source ~/.bash_profile
 
 # Get branch and push to remote, create full_branch, branch, and prebranch
 base_branch=$(git rev-parse --abbrev-ref HEAD)
+
+# Extract Jira ticket number from the branch name
+ticket_number=$(echo $base_branch | grep -o -E '([A-Za-z]+-[0-9]{3,}|[A-Za-z]+-[0-9]{3,})')
+
+# Check if a valid ticket number is found
+if [ -z "$ticket_number" ]; then
+    echo "Error: Branch name does not contain a valid Jira ticket number."
+    exit 1
+fi
+
 # Pushes local commits to the remote branch
 git push origin $base_branch
 full_branch=$base_branch
 # branch -> TWM Jira Ticket Number
-branch="${base_branch:0:9}"
+branch="$ticket_number"
 # prebranch -> TWM Jira Ticket Prefix i.e. CRS-, DIG-, MOB-. Will need to be modified for DEVOPS-, INFRA-, etc.
-prebranch="${base_branch:0:3}"
+prebranch="${ticket_number:0:3}"
 echo $prebranch
+
+# Check for the presence of pull_request_template in .github/ folder
+if [ -e ".github/pull_request_template" ]; then
+    template_path=".github/pull_request_template"
+else
+    # Check in the home folder where the script resides
+    script_folder=$(dirname "$0")
+    template_path="$script_folder/pull_request_template"
+fi
+
+# Check if the template file exists
+if [ ! -e "$template_path" ]; then
+    echo "Error: Pull request template not found."
+    exit 1
+fi
 
 # Check operating system then Request ticket data from Jira API
 response=
@@ -177,7 +202,7 @@ fi
 echo "" >> PR_MESSAGE
 
 # Build PR description - .github/pull_request_template is default
-cat .github/pull_request_template >> PR_MESSAGE
+cat "$template_path" >> PR_MESSAGE
 # Change location if .github/pull_request_template does not exist in repo
 # cat ../pull_request_template >> PR_MESSAGE
 
@@ -193,8 +218,12 @@ if [[ "$subtasks" == null ]]
 	subtasks=$(echo "* No Subtasks")
 fi
 
-# Add the description, comments, subtasks, team, sprint, epic, and steps to reproduce
-# Need to check all for null variables
+if [[ "$desc" == null ]]
+  then
+	desc=$(echo "* No Description")
+fi
+
+# Add the description, comments, subtasks, team, sprint, epic, and steps to reproduce 
 echo "### Description
 $desc
 ##
@@ -240,17 +269,19 @@ screenshot_count=$(echo $response | jq -r '.fields.attachment | length')
 for i in $(seq 0 $((screenshot_count - 1))); do
   ssid=$(echo $response | jq -r ".fields.attachment[$i].id")
   att=$(echo $response | jq -r ".fields.attachment[$i]")
-
   if [[ $ssid == null ]]; then
     echo "No screenshot #$((i + 1))"
   else
     attres=$(curl -I "${jira_url}/rest/api/3/attachment/content/${ssid}" -u "$jira_access_token")
-
+	echo "${jira_url}/rest/api/3/attachment/content/${ssid}"
     if [ -z "$attres" ]; then
       echo "Error fetching url for screenshot #$((i + 1)) from Jira API"
     else
       screenshot=${attres##*location: }
       screenshot=${screenshot%%vary:*}
+
+	  # Remove 'x-frame-options: SAMEORIGIN' from the screenshot URL
+      screenshot=$(echo "$screenshot" | sed 's/x-frame-options: SAMEORIGIN//')
 
       echo "![Screen Shot]($screenshot)" > TMP
       sed -i -e '/Screen Shots/r TMP' PR_MESSAGE
