@@ -92,8 +92,7 @@ else
 	title=$(echo $response | jq -r '.fields.summary' | sed 's/^[ ]*//;s/[ ]*$//')
 	type=$(echo $response | jq -r '.fields.issuetype.name')
 	desc=$(echo $response | jq -r '.fields.description')
-	# Need to update to remove unreadable comments 
-	comments=$(echo $response | jq -r '.fields.comment.comments[] | ("- " ) + .body | split("!")[0]')
+	comments=$(echo $response | jq -r '.fields.comment.comments[] | select(.body != "") | ("- " ) + .body')
 	subtasks=$(echo $response | jq -r '.fields.subtasks[] | if .fields.status.name == "Done" then ("- [x] " ) else ("- [ ] " ) end + .fields.summary + (" - ") + .fields.status.name')
 	attlength=$(echo $response | jq '.fields.attachment | length')
 	epic=$(echo $response | jq -r '.fields.parent.fields.summary')
