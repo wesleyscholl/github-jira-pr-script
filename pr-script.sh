@@ -104,7 +104,7 @@ else
 	labels=$(echo $response | jq -r '.fields.labels[]')
 	labels=${labels//$'\n'/,}
 	# git diff - code changes
-	gitdiff=$(git diff HEAD^ HEAD)
+	gitdiff=$(git diff $base_branch)
 fi
 
 # Check for steps to reproduce
@@ -285,8 +285,7 @@ for i in $(seq 0 $((screenshot_count - 1))); do
 	  # Remove 'x-frame-options: SAMEORIGIN' from the screenshot URL
       screenshot=$(echo "$screenshot" | sed 's/x-frame-options: SAMEORIGIN//')
 
-      echo "![Screen Shot]($screenshot)" > TMP
-      sed -i -e '/Screen Shots/r TMP' PR_MESSAGE
+      echo "![Screen Shot](${screenshot%.*})" >> PR_MESSAGE
     fi
   fi
 done
