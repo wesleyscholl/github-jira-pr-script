@@ -248,7 +248,7 @@ sed -i -e '/as needed./r TMP' PR_MESSAGE
 awk '!/Replace this with a short description.  Delete sub sections as needed./ && !/Put your Ticket Title Here/' PR_MESSAGE > TMP
 mv TMP PR_MESSAGE
 
-# Why is this repeated?
+# ***Why is this repeated?***
 # Delete unused lines from pull_request_template - Cross-platform commands & logic
 awk '!/Replace this with a short description.  Delete sub sections as needed./ && !/Put your Ticket Title Here/' PR_MESSAGE > TMP
 mv TMP PR_MESSAGE
@@ -268,7 +268,7 @@ git log $full_branch --not $(git for-each-ref --format='%(refname)' refs/heads/ 
 sed -i -e '/list of updates/r TMP' PR_MESSAGE
 echo PR_MESSAGE
 
-# Add unit test results
+# Add unit tests results - code coverage % - different commands for typescript, C#, argo(none)
 
 # Getting screenshot count, parsing screenshot IDs, parsing attachment response, and adding screenshots to the template. 
 screenshots=()
