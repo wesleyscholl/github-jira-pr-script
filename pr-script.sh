@@ -53,6 +53,8 @@ else
 	exit 1
 fi
 
+echo $(curl -s "https://totalwine.atlassian.net/rest/api/3/issue/455222/comment/725076" -u "$jira_access_token")
+
 # Setting head branch to merge PR into - Pass a parameter after pr - Ex. 'pr develop' or 'pr master', defaults to develop branch
 if [ -z "$1" ]
   then
@@ -71,7 +73,7 @@ echo $base_branch
 title=
 type=
 desc=
-# Add acceptance criteria
+accept=
 comments=
 subtasks=
 attlength=
@@ -93,6 +95,7 @@ else
 	title=$(echo $response | jq -r '.fields.summary' | sed 's/^[ ]*//;s/[ ]*$//')
 	type=$(echo $response | jq -r '.fields.issuetype.name')
 	desc=$(echo $response | jq -r '.fields.description')
+  accept=$(echo $response | jq -r '.fields.customfield_12700')
 	comments=$(echo $response | jq -r '.fields.comment.comments[] | select(.body != "") | ("- " ) + .body')
 	subtasks=$(echo $response | jq -r '.fields.subtasks[] | if .fields.status.name == "Done" then ("- [x] " ) else ("- [ ] " ) end + .fields.summary + (" - ") + .fields.status.name')
 	attlength=$(echo $response | jq '.fields.attachment | length')
@@ -108,12 +111,24 @@ else
 	gitdiff=$(git diff $base_branch)
 fi
 
+# echo $response
+
 # Check for steps to reproduce
-if [[ "$reproduce" == null ]];
-then
-    # Should only show if ticket is bug
-    echo "No steps to reproduce - N/A"
-	reproduce="N/A"
+if [[ "$reproduce" == null ]]
+  then
+  reproduce=$(echo "")
+  else
+  reproduce=$(echo "## Steps to Reproduce
+- $reproduce")
+fi
+
+# Check for acceptance criteria
+if [[ "$accept" == null ]]
+  then
+  accept=$(echo "")
+  else
+  accept=$(echo "### Acceptance Criteria
+- $accept")
 fi
 
 # Check for sprint 
@@ -219,6 +234,7 @@ if [[ "$subtasks" == null ]]
 	subtasks=$(echo "* No Subtasks")
 fi
 
+# Checking for description
 if [[ "$desc" == null ]]
   then
 	desc=$(echo "* No Description")
@@ -227,6 +243,8 @@ fi
 # Add the description, comments, subtasks, team, sprint, epic, and steps to reproduce 
 echo "### Description
 $desc
+##
+$accept
 ##
 #### Comments
 $comments
@@ -240,15 +258,9 @@ $subtasks
 > $components
 > $epic
 ##
-## Steps to Reproduce
-- $reproduce" > TMP
+$reproduce" > TMP
 sed -i -e '/as needed./r TMP' PR_MESSAGE
 
-# Delete unused lines from pull_request_template - Cross-platform commands & logic
-awk '!/Replace this with a short description.  Delete sub sections as needed./ && !/Put your Ticket Title Here/' PR_MESSAGE > TMP
-mv TMP PR_MESSAGE
-
-# ***Why is this repeated?***
 # Delete unused lines from pull_request_template - Cross-platform commands & logic
 awk '!/Replace this with a short description.  Delete sub sections as needed./ && !/Put your Ticket Title Here/' PR_MESSAGE > TMP
 mv TMP PR_MESSAGE
@@ -267,8 +279,6 @@ fi
 git log $full_branch --not $(git for-each-ref --format='%(refname)' refs/heads/ | grep -v "refs/heads/$full_branch") --oneline > TMP
 sed -i -e '/list of updates/r TMP' PR_MESSAGE
 echo PR_MESSAGE
-
-# Add unit tests results - code coverage % - different commands for typescript, C#, argo(none)
 
 # Getting screenshot count, parsing screenshot IDs, parsing attachment response, and adding screenshots to the template. 
 screenshots=()
