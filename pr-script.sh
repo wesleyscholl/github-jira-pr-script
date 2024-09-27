@@ -3,10 +3,10 @@ source ~/.bash_profile
 
 # Get branch and push to remote, create full_branch, branch, and prebranch
 base_branch=$(git rev-parse --abbrev-ref HEAD)
-
+echo $base_branch
 # Extract Jira ticket number from the branch name
-ticket_number=$(echo $base_branch | grep -o -E '([A-Za-z]+-[0-9]{3,}|[A-Za-z]+-[0-9]{3,})')
-
+ticket_number=$(echo $base_branch | grep -o -E '[A-Za-z]{3,6}-[0-9]{3,}')
+echo $ticket_number
 # Check if a valid ticket number is found
 if [ -z "$ticket_number" ]; then
     echo "Error: Branch name does not contain a valid Jira ticket number."
@@ -18,9 +18,6 @@ git push origin $base_branch
 full_branch=$base_branch
 # branch -> TWM Jira Ticket Number
 branch="$ticket_number"
-# prebranch -> TWM Jira Ticket Prefix i.e. CRS-, DIG-, MOB-. Will need to be modified for DEVOPS-, INFRA-, etc.
-# prebranch="${ticket_number:0:3}"
-# echo $prebranch
 
 # Check for the presence of pull_request_template in .github/ folder
 if [ -e ".github/pull_request_template" ]; then
@@ -52,8 +49,6 @@ else
     echo "Operating system not supported"
 	exit 1
 fi
-
-echo $(curl -s "https://totalwine.atlassian.net/rest/api/3/issue/455222/comment/725076" -u "$jira_access_token")
 
 # Setting head branch to merge PR into - Pass a parameter after pr - Ex. 'pr develop' or 'pr master', defaults to develop branch
 if [ -z "$1" ]
@@ -112,6 +107,31 @@ else
 fi
 
 # echo $response
+
+# Get PR overview description from Gemini AI API
+
+# Stringify the diff
+diff=$(echo $gitdiff | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\n/\\n/g')
+
+# Prepare the Gemini API request
+gemini_request='{
+	"contents":[{"parts":[{"text": "Write a detailed pull request summary description for these git diff changes: '"$diff"' Do not include any other text in the repsonse."}]}],
+	"safetySettings": [{"category": "HARM_CATEGORY_DANGEROUS_CONTENT","threshold": "BLOCK_NONE"}],
+	"generationConfig": {
+		"temperature": 0.15,
+		"maxOutputTokens": 250
+	}
+}'
+
+# Get PR summary from Gemini API
+pr_summary=$(curl -s \
+  -H 'Content-Type: application/json' \
+  -d "$gemini_request" \
+  -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}" \
+  | jq -r '.candidates[0].content.parts[0].text'
+  )
+
+# echo $pr_summary
 
 # Check for steps to reproduce
 if [[ "$reproduce" == null ]]
@@ -240,8 +260,10 @@ if [[ "$desc" == null ]]
 	desc=$(echo "* No Description")
 fi
 
-# Add the description, comments, subtasks, team, sprint, epic, and steps to reproduce 
-echo "### Description
+# Add the PR summary, description, comments, subtasks, team, sprint, epic, and steps to reproduce 
+echo "### PR Summary
+$pr_summary
+### Ticket Description
 $desc
 ##
 $accept
@@ -306,8 +328,8 @@ for i in $(seq 0 $((screenshot_count - 1))); do
   fi
 done
 
-# Shorten the git diff to 3000 characters
-gitdiff=${gitdiff:0:3000}
+# Shorten the git diff to 2500 characters
+gitdiff=${gitdiff:0:2500}
 
 # Add the git diff with proper formatting
 echo '```' > TMP
