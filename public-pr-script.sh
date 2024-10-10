@@ -28,9 +28,10 @@ fi
 echo $base_branch
 
 # Assign pull request variables 
-pr_title=$(git log --pretty=format:"%s" -n 1)
+pr_title=$($full_branch)
 pr_summary=
-gitdiff=$(git diff $base_branch)
+# Limit to 100 lines of diff
+gitdiff=$(git diff --cached -U100)
 
 
 # Get PR summary description from Gemini AI API
@@ -90,6 +91,7 @@ fi
 # Add PR title, pull request summary, diff, and commit messages to the PR message
 if [ "$pr_title" != "null" ]; then
 	echo "$pr_title
+
     # $pr_title
     ## PR Summary
     $pr_summary
@@ -118,14 +120,14 @@ sed -i -e '/### Code Changes/r TMP' PR_MESSAGE
 
 # Print the PR_MESSAGE
 cat PR_MESSAGE
-echo $label
+
 echo $reviewers
 # Create the pull request - Uncomment to create a live PR, comment to check PR formatting
-# if [ -z "$label" ]; then
-# 	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign
-# else
-# 	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign -l $label
-# fi
+if [ -z "$label" ]; then
+	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign
+else
+	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign -l $label
+fi
 
 # Cleanup temp files
 rm -f PR_MESSAGE
