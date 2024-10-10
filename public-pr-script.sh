@@ -9,6 +9,9 @@ echo $base_branch
 git push origin $base_branch
 full_branch=$base_branch
 
+# Get current branch name
+
+
 # Create a temporary file for the PR message
 touch PR_MESSAGE
 
@@ -25,12 +28,12 @@ fi
 echo $base_branch
 
 # Assign pull request variables 
-pr_title=$($base_branch)
+pr_title=$(git log --pretty=format:"%s" -n 1)
 pr_summary=
 gitdiff=$(git diff $base_branch)
 
 
-# Get PR overview description from Gemini AI API
+# Get PR summary description from Gemini AI API
 # Stringify the diff
 diff=$(echo $gitdiff | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\n/\\n/g')
 
@@ -84,9 +87,6 @@ else
 	echo $reviewers
 fi
 
-# Append the commit messages and hashes in the description
-git log $full_branch --not $(git for-each-ref --format='%(refname)' refs/heads/ | grep -v "refs/heads/$full_branch") --oneline > TMP
-
 # Add PR title, pull request summary, diff, and commit messages to the PR message
 if [ "$pr_title" != "null" ]; then
 	echo "$pr_title
@@ -94,12 +94,17 @@ if [ "$pr_title" != "null" ]; then
     ## PR Summary
     $pr_summary
     ### Code Changes
-    ### Commits
-    TMP" > PR_MESSAGE
+    ### Commits" > PR_MESSAGE
 fi
 
-# Build PR message template
-echo "PR_MESSAGE"
+# Get the commit messages and hashes
+commits=$(git log $full_branch --not $(git for-each-ref --format='%(refname)' refs/heads/ | grep -v "refs/heads/$full_branch") --oneline)
+echo "$commits" > TMP
+
+# Add the commit messages to the PR message
+if [ -s TMP ]; then
+    sed -i -e '/### Commits/r TMP' PR_MESSAGE
+fi
 
 # Add the git diff with proper code block formatting
 echo '```' > TMP
