@@ -32,8 +32,7 @@ echo $base_branch
 pr_title=$(git rev-parse --abbrev-ref HEAD)
 pr_summary=
 # Limit to 100 lines of diff
-gitdiff=$(git diff --cached -U100)
-
+gitdiff=$(git diff $base_branch..$full_branch | head -n 100)
 
 # Get PR summary description from Gemini AI API
 # Stringify the diff
