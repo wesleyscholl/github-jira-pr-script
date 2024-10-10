@@ -102,10 +102,12 @@ else
 	components=$(echo $response | jq -r '.fields.components[0].name')
 	labels=$(echo $response | jq -r '.fields.labels[]')
 	labels=${labels//$'\n'/,}
+  # Branch(es) / Repository
+  repositoryUrl=$(echo $response | jq -r '.fields.customfield_13410[0]')
 	# git diff - code changes
 	gitdiff=$(git diff $base_branch)
 fi
-
+echo $repositoryUrl
 # echo $response
 
 # Get PR overview description from Gemini AI API
@@ -123,7 +125,7 @@ gemini_request='{
 	}
 }'
 
-# Get PR summary from Gemini API
+# Get commit message from Gemini API
 pr_summary=$(curl -s \
   -H 'Content-Type: application/json' \
   -d "$gemini_request" \
@@ -344,6 +346,7 @@ sed -i -e '/list of code changes/r TMP' PR_MESSAGE
 # Print the PR_MESSAGE
 cat PR_MESSAGE
 echo $label
+echo $reviewers
 # Create the pull request - Uncomment to create a live PR, comment to check PR formatting
 # if [ -z "$label" ]; then
 # 	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign
