@@ -1,0 +1,69 @@
+feat-public-pull-request-script
+
+#feat-public-pull-request-script
+
+## PR Summary
+ Pull Request: Automate Pull Requests with Gemini AI This pull request introduces a script that automates the creation of pull requests on GitHub using Gemini AI. **Key Features:** - **Gemini AI Integration:** Leverages the Gemini AI API to generate a comprehensive pull request summary, including title, description, code changes, and commit messages. - **GitHub CLI Integration:** Utilizes the `hub` command-line tool for seamless interaction with GitHub. - **User-Friendly Configuration:** Requires setting up GitHub and Gemini API keys, reviewers, and assignee in the user's environment variables. - **Flexible Usage:** Allows specifying the target branch for the pull request, defaulting to the `develop` branch. - **Automated Push and PR Creation:** Pushes local commits to the remote branch and creates a pull request on GitHub. **Changes:** - **Script Structure:** The script is now structured with clear comments and explanations for better readability and maintainability. - **Gemini AI Integration:** The script now utilizes the Gemini AI API to generate a detailed pull request summary. - **PR Title and Summary:** The script automatically extracts the current branch name for the PR title and utilizes Gemini AI to generate a concise
+
+### Code Changes
+diff --git a/public-pr-script.sh b/public-pr-script.sh
+index c90f72f..0924593 100755
+--- a/public-pr-script.sh
++++ b/public-pr-script.sh
+@@ -1,3 +1,14 @@
++## AI Git Pull Request Script - Automate Pull Requests using Gemini AI
++## Requirements: GitHub CLI (hub), Gemini AI API Key, and a GitHub repository
++## Configuration instructions: GitHub Token (set in .bash_profile or .zshrc)
++## Gemini API Key (set in .bash_profile or .zshrc)
++## Set reviewers (Code reviewer usernames) and assignee (your GitHub username) in the .bash_profile or .zshrc
++## Optional - Setting an alias for this script in .bash_profile or .zshrc (alias pr='~/public-pr-script.sh')
++## Usage: pr [head branch] - Ex. 'pr develop', 'pr main', 'pr master', defaults to develop branch
++## Note: This script will push local commits to the remote branch and create a pull request on GitHub
++## Gemini AI will generate a PR summary for the pull request
++## The PR summary will include the PR title, PR summary, code changes, and commit messages with hashes
++
+ #!/bin/zsh
+ source ~/.bash_profile
+ 
+@@ -24,13 +35,12 @@ fi
+ 
+ echo $base_branch
+ 
+-# Assign pull request variables 
+-pr_title=$($base_branch)
++# Get current branch name for PR title
++pr_title=$(git rev-parse --abbrev-ref HEAD)
+ pr_summary=
+-gitdiff=$(git diff $base_branch)
+-
++# Limit to 100 lines of diff
++gitdiff=$(git diff $base_branch..$full_branch | head -n 50)
+ 
+-# Get PR overview description from Gemini AI API
+ # Stringify the diff
+ diff=$(echo $gitdiff | sed 's/\/\\/g' | sed 's/"/\"/g' | sed 's/
+/\n/g')
+ 
+@@ -84,22 +94,28 @@ else
+ 	echo $reviewers
+ fi
+ 
+-# Append the commit messages and hashes in the description
+-git log $full_branch --not $(git for-each-ref --format='%(refname)' refs/heads/ | grep -v "refs/heads/$full_branch") --oneline > TMP
+-
+ # Add PR title, pull request summary, diff, and commit messages to the PR message
+ if [ "$pr_title" != "null" ]; then
+ 	echo "$pr_title
+-    # $pr_title
+-    ## PR Summary
+-    $pr_summary
+```
+    
+### Commits
+7e4f3fe feat: Add Gemini AI PR summary generation
+0ef9a28 Refactor: Simplify PR script and remove Gemini API call
+9000d3e Reduce PR summary diff to 50 lines
+45aa894 Fix: Limit diff length for Gemini API call
+77a9b26 Fix: Use current branch name for PR title
+649a71e Fix: Use full branch name for PR title and limit diff to 100 lines
+ec75a62 Refactor: Use Gemini AI for PR summary and commit messages
