@@ -1,3 +1,14 @@
+## AI Git Pull Request Script - Automate Pull Requests using Gemini AI
+## Requirements: GitHub CLI (hub), Gemini AI API Key, and a GitHub repository
+## Configuration instructions: GitHub Token (set in .bash_profile or .zshrc)
+## Gemini API Key (set in .bash_profile or .zshrc)
+## Set reviewers (Code reviewer usernames) and assignee (your GitHub username) in the .bash_profile or .zshrc
+## Optional - Setting an alias for this script in .bash_profile or .zshrc (alias pr='~/public-pr-script.sh')
+## Usage: pr [head branch] - Ex. 'pr develop', 'pr main', 'pr master', defaults to develop branch
+## Note: This script will push local commits to the remote branch and create a pull request on GitHub
+## Gemini AI will generate a PR summary for the pull request
+## The PR summary will include the PR title, PR summary, code changes, and commit messages with hashes
+
 #!/bin/zsh
 source ~/.bash_profile
 
@@ -24,13 +35,12 @@ fi
 
 echo $base_branch
 
-# Assign pull request variables 
-pr_title=$($base_branch)
+# Get current branch name for PR title
+pr_title=$(git rev-parse --abbrev-ref HEAD)
 pr_summary=
-gitdiff=$(git diff $base_branch)
+# Limit to 100 lines of diff
+gitdiff=$(git diff $base_branch..$full_branch | head -n 50)
 
-
-# Get PR overview description from Gemini AI API
 # Stringify the diff
 diff=$(echo $gitdiff | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\n/\\n/g')
 
@@ -84,22 +94,28 @@ else
 	echo $reviewers
 fi
 
-# Append the commit messages and hashes in the description
-git log $full_branch --not $(git for-each-ref --format='%(refname)' refs/heads/ | grep -v "refs/heads/$full_branch") --oneline > TMP
-
 # Add PR title, pull request summary, diff, and commit messages to the PR message
 if [ "$pr_title" != "null" ]; then
 	echo "$pr_title
-    # $pr_title
-    ## PR Summary
-    $pr_summary
-    ### Code Changes
-    ### Commits
-    TMP" > PR_MESSAGE
+
+#$pr_title
+
+## PR Summary
+$pr_summary
+
+### Code Changes
+    
+### Commits" > PR_MESSAGE
 fi
 
-# Build PR message template
-echo "PR_MESSAGE"
+# Get the commit messages and hashes
+commits=$(git log $full_branch --not $(git for-each-ref --format='%(refname)' refs/heads/ | grep -v "refs/heads/$full_branch") --oneline)
+echo "$commits" > TMP
+
+# Add the commit messages to the PR message
+if [ -s TMP ]; then
+    sed -i -e '/### Commits/r TMP' PR_MESSAGE
+fi
 
 # Add the git diff with proper code block formatting
 echo '```' > TMP
@@ -111,19 +127,13 @@ sed -i -e '/### Code Changes/r TMP' PR_MESSAGE
 echo '```diff' > TMP
 sed -i -e '/### Code Changes/r TMP' PR_MESSAGE
 
-# Print the PR_MESSAGE
+# Print the PR_MESSAGE and reviewers
 cat PR_MESSAGE
-echo $label
 echo $reviewers
-# Create the pull request - Uncomment to create a live PR, comment to check PR formatting
-# if [ -z "$label" ]; then
-# 	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign
-# else
-# 	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign -l $label
-# fi
+
+# Create the GitHub (hub) pull request - Uncomment to create a live PR, comment to check PR formatting
+hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign
 
 # Cleanup temp files
-rm -f PR_MESSAGE
-rm -f PR_MESSAGE-e
-rm -f PR_MESSAGE_DESCRIPTION
 rm -f TMP
+rm -f PR_MESSAGE
