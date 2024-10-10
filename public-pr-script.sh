@@ -28,7 +28,8 @@ fi
 echo $base_branch
 
 # Assign pull request variables 
-pr_title=$($full_branch)
+# Get current branch name for PR title
+pr_title=$(git rev-parse --abbrev-ref HEAD)
 pr_summary=
 # Limit to 100 lines of diff
 gitdiff=$(git diff --cached -U100)
@@ -93,9 +94,12 @@ if [ "$pr_title" != "null" ]; then
 	echo "$pr_title
 
     # $pr_title
+
     ## PR Summary
     $pr_summary
+
     ### Code Changes
+    
     ### Commits" > PR_MESSAGE
 fi
 
