@@ -8,6 +8,8 @@
 ## Note: This script will push local commits to the remote branch and create a pull request on GitHub
 ## Gemini AI will generate a PR summary for the pull request
 ## The PR summary will include the PR title, PR summary, code changes, and commit messages with hashes
+## For detailed configuration instructions and usage, refer to the GitHub repository:
+## https://github.com/wesleyscholl/github-jira-pr-script
 
 #!/bin/zsh
 source ~/.bash_profile
