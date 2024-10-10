@@ -9,9 +9,6 @@ echo $base_branch
 git push origin $base_branch
 full_branch=$base_branch
 
-# Get current branch name
-
-
 # Create a temporary file for the PR message
 touch PR_MESSAGE
 
@@ -27,14 +24,12 @@ fi
 
 echo $base_branch
 
-# Assign pull request variables 
 # Get current branch name for PR title
 pr_title=$(git rev-parse --abbrev-ref HEAD)
 pr_summary=
 # Limit to 100 lines of diff
 gitdiff=$(git diff $base_branch..$full_branch | head -n 50)
 
-# Get PR summary description from Gemini AI API
 # Stringify the diff
 diff=$(echo $gitdiff | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\n/\\n/g')
 
@@ -121,19 +116,13 @@ sed -i -e '/### Code Changes/r TMP' PR_MESSAGE
 echo '```diff' > TMP
 sed -i -e '/### Code Changes/r TMP' PR_MESSAGE
 
-# Print the PR_MESSAGE
+# Print the PR_MESSAGE and reviewers
 cat PR_MESSAGE
-
 echo $reviewers
-# Create the pull request - Uncomment to create a live PR, comment to check PR formatting
-if [ -z "$label" ]; then
-	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign
-else
-	hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign -l $label
-fi
+
+# Create the GitHub (hub) pull request - Uncomment to create a live PR, comment to check PR formatting
+hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assign
 
 # Cleanup temp files
-rm -f PR_MESSAGE
-rm -f PR_MESSAGE-e
-rm -f PR_MESSAGE_DESCRIPTION
 rm -f TMP
+rm -f PR_MESSAGE
