@@ -1,3 +1,14 @@
+## AI Git Pull Request Script - Automate Pull Requests using Gemini AI
+## Requirements: GitHub CLI (hub), Gemini AI API Key, and a GitHub repository
+## Configuration instructions: GitHub Token (set in .bash_profile or .zshrc)
+## Gemini API Key (set in .bash_profile or .zshrc)
+## Set reviewers (Code reviewer usernames) and assignee (your GitHub username) in the .bash_profile or .zshrc
+## Optional - Setting an alias for this script in .bash_profile or .zshrc (alias pr='~/public-pr-script.sh')
+## Usage: pr [head branch] - Ex. 'pr develop', 'pr main', 'pr master', defaults to develop branch
+## Note: This script will push local commits to the remote branch and create a pull request on GitHub
+## Gemini AI will generate a PR summary for the pull request
+## The PR summary will include the PR title, PR summary, code changes, and commit messages with hashes
+
 #!/bin/zsh
 source ~/.bash_profile
 
@@ -87,7 +98,7 @@ fi
 if [ "$pr_title" != "null" ]; then
 	echo "$pr_title
 
-# $pr_title
+#$pr_title
 
 ## PR Summary
 $pr_summary
