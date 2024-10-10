@@ -32,7 +32,7 @@ echo $base_branch
 pr_title=$(git rev-parse --abbrev-ref HEAD)
 pr_summary=
 # Limit to 100 lines of diff
-gitdiff=$(git diff $base_branch..$full_branch | head -n 100)
+gitdiff=$(git diff $base_branch..$full_branch | head -n 50)
 
 # Get PR summary description from Gemini AI API
 # Stringify the diff
@@ -92,14 +92,14 @@ fi
 if [ "$pr_title" != "null" ]; then
 	echo "$pr_title
 
-    # $pr_title
+# $pr_title
 
-    ## PR Summary
-    $pr_summary
+## PR Summary
+$pr_summary
 
-    ### Code Changes
+### Code Changes
     
-    ### Commits" > PR_MESSAGE
+### Commits" > PR_MESSAGE
 fi
 
 # Get the commit messages and hashes
