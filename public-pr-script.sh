@@ -12,29 +12,19 @@
 #!/bin/zsh
 source ~/.bash_profile
 
-# Get branch and push to remote, create full_branch, branch
+# Get branch and push to remote
 base_branch=$(git rev-parse --abbrev-ref HEAD)
-echo $base_branch
-
-# Pushes local commits to the remote branch
+echo "Current branch: $base_branch"
 git push origin $base_branch
-full_branch=$base_branch
 
-# Create a temporary file for the PR message
-touch PR_MESSAGE
+# Set head branch (default to 'develop')
+head_branch=${1:-develop}
+echo "Head branch: $head_branch"
 
-# Setting head branch to merge PR into:
-# Pass a parameter after pr - Ex. 'pr develop', 'pr main', 'pr master', defaults to develop branch
-if [ -z "$1" ]
-  then
-    echo "No head branch argument supplied"
-	base_branch='develop'
-else
-	base_branch=$1
-fi
-
-# Print the base branch
-echo "Base branch: $base_branch"
+# Generate PR title and summary
+pr_title=$(git rev-parse --abbrev-ref HEAD)
+gitdiff=$(git diff $head_branch..$base_branch | head -n 50)
+diff=$(echo $gitdiff | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\n/\\n/g')
 
 # Get current branch name for PR title
 pr_title=$(git rev-parse --abbrev-ref HEAD)
@@ -73,32 +63,15 @@ if [ -z "$pr_summary" ]; then
       )
 fi
 
-# Print the PR summary
-echo $pr_summary
-
-# If the Gemini retry request fails, exit
-if [ -z "$pr_summary" ]; then
-    echo "Error: API request for PR summary failed. Please try again."
-    exit 1
-fi
-
 # Remove any markdown formatting from the PR summary
 pr_summary=$(echo $pr_summary | sed 's/#//g' | sed 's/```//g' | sed 's/PR Summary://g')
 
-# Prepare pull request GitHub PR Reviewers and GitHub PR Assignee
-if [ -z $github_reviewers && -z $github_author ];
-  then
-    echo "No GitHub Reviewers Configured"
-else
-	assignee="${github_author}"
-	reviewers="${github_reviewers}"
-	echo $github_author
-	echo $github_reviewers
-fi
+# Prepare reviewers and assignee
+reviewers=${github_reviewers:-}
+assignee=${github_author:-}
 
-# Add PR title, pull request summary, diff, and commit messages to the PR message
-if [ "$pr_title" != "null" ]; then
-	echo "$pr_title
+# Create PR message
+echo "$pr_title
 
 #$pr_title
 
@@ -108,37 +81,32 @@ $pr_summary
 ### Code Changes
     
 ### Commits" > PR_MESSAGE
-fi
 
-# Get the commit messages and hashes
-commits=$(git log $full_branch --not $(git for-each-ref --format='%(refname)' refs/heads/ | grep -v "refs/heads/$full_branch") --oneline)
+# Get commit messages and hashes
+commits=$(git log $base_branch --not $(git for-each-ref --format='%(refname)' refs/heads/ | grep -v "refs/heads/$base_branch") --oneline)
 echo "$commits" > TMP
-
-# Add the commit messages to the PR message
-if [ -s TMP ]; then
-    sed -i -e '/### Commits/r TMP' PR_MESSAGE
-fi
+sed -i -e '/### Commits/r TMP' PR_MESSAGE
 
 # Add the git diff with proper code block formatting
 printf '```\n%s\n```diff\n' "$gitdiff" > TMP
 sed -i -e '/### Code Changes/r TMP' PR_MESSAGE
 
-# Print the PR_MESSAGE, reviewers and assignee
+# Print PR details
+echo "PR Message: "
 cat PR_MESSAGE
 echo "Reviewers: $reviewers"
 echo "Assignee: $assignee"
 
 # Check for reviewers and assignee and create GitHub pull request with hub - Uncomment to create a live PR, comment to check PR formatting
-# if [[ -n "$reviewers" && -n "$assignee" ]]; then
-#   hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assignee
-# elif [[ -n "$reviewers" ]]; then
-#   hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers
-# elif [[ -n "$assignee" ]]; then
-#   hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -a $assignee
-# else
-#   hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o
-# fi
+if [[ -n "$reviewers" && -n "$assignee" ]]; then
+  hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assignee
+elif [[ -n "$reviewers" ]]; then
+  hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers
+elif [[ -n "$assignee" ]]; then
+  hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -a $assignee
+else
+  hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o
+fi
 
 # Cleanup temp files
-rm -f TMP
-rm -f PR_MESSAGE
+rm -f TMP PR_MESSAGE PR_MESSAGE-e

@@ -3,9 +3,9 @@ feature-1234-test
 #feature-1234-test
 
 ## PR Summary
-diff --- a/src/components/Button/Button.stories.js +++ b/src/components/Button/Button.stories.js @@ -1,10 +1,10 @@ import React from 'react'; import { storiesOf } from '@storybook/react'; -import { withKnobs, text, boolean, select } from '@storybook/addon-knobs'; +import { withKnobs, text, boolean, select, number } from '@storybook/addon-knobs'; import { action } from '@storybook/addon-actions'; import Button from './Button'; -storiesOf('Button', module) +storiesOf('Components/Button', module) .addDecorator(withKnobs) .add('with text', () => ( <Button onClick={action('clicked')}> 
+ PR: Automate Pull Requests with Gemini AI This pull request introduces a script that automates the creation of pull requests on GitHub using Gemini AI. **Key Features:** - **Gemini AI Integration:** Leverages the Gemini AI API to generate a comprehensive pull request summary, including title, description, code changes, and commit messages. - **GitHub CLI Integration:** Utilizes the `hub` command-line tool for seamless interaction with GitHub. - **User-Friendly Configuration:** Requires setting up GitHub and Gemini API keys, reviewers, and assignee in the user's environment variables. - **Flexible Usage:** Allows specifying the target branch for the pull request, defaulting to the `develop` branch. - **Automated Push and PR Creation:** Pushes local commits to the remote branch and creates a pull request on GitHub. **Changes:** - **Script Structure:** The script is now structured with clear comments and explanations for better readability and maintainability. - **Gemini AI Integration:** The script now utilizes the Gemini AI API to generate a detailed pull request summary. - **PR Title and Summary:** The script automatically extracts the current branch name for the PR title and utilizes Gemini AI to generate a concise and informative
 
 ### Code Changes
     
 ### Commits
-
+acd7a4f feature-1234 feat(1234): Automate PRs with Gemini AI and GitHub CLI
