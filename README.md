@@ -44,17 +44,7 @@ Manually creating a GitHub pull request is a time-consuming task. Save time usin
 ## Requirements
 
 > [!IMPORTANT]  
-> For the public script, there are fewer requirements: GitHub CLI (hub), GitHub Token (set in .bash_profile or .zshrc), Gemini AI API Key, Set reviewers (Code reviewer usernames) and assignee (your GitHub username) in the .bash_profile or .zshrc, and a GitHub repository
-## Configuration instructions: 
-## Gemini API Key (set in .bash_profile or .zshrc)
-## 
-## Optional - Setting an alias for this script in .bash_profile or .zshrc (alias pr='~/public-pr-script.sh')
-## Usage: pr [head branch] - Ex. 'pr develop', 'pr main', 'pr master', defaults to develop branch
-## Note: This script will push local commits to the remote branch and create a pull request on GitHub
-## Gemini AI will generate a PR summary for the pull request
-## The PR summary will include the PR title, PR summary, code changes, and commit messages with hashes
-## For detailed configuration instructions and usage, refer to the GitHub repository:
-## https://github.com/wesleyscholl/github-jira-pr-script
+> For the public script (`public-pr-script.sh`), there are fewer requirements: GitHub CLI (hub), GitHub Token (PAT - set in .bash_profile or .zshrc), Gemini AI API Key (set in .bash_profile or .zshrc), GitHub reviewers (Code reviewer GitHub usernames) and GitHub assignee (your GitHub username) in .bash_profile or .zshrc (***`reviwers` and `assignee` are both optional**).
 
 | Name | Description | Link, Location, or Command |
 | --- | --- | --- |
