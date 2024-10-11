@@ -98,15 +98,15 @@ echo "Reviewers: $reviewers"
 echo "Assignee: $assignee"
 
 # Check for reviewers and assignee and create GitHub pull request with hub - Uncomment to create a live PR, comment to check PR formatting
-if [[ -n "$reviewers" && -n "$assignee" ]]; then
-  hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assignee
-elif [[ -n "$reviewers" ]]; then
-  hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -r $reviewers
-elif [[ -n "$assignee" ]]; then
-  hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o -a $assignee
-else
-  hub pull-request -b $base_branch -F PR_MESSAGE --no-edit -o
-fi
+# if [[ -n "$reviewers" && -n "$assignee" ]]; then
+#   hub pull-request -b $head_branch -F PR_MESSAGE --no-edit -o -r $reviewers -a $assignee
+# elif [[ -n "$reviewers" ]]; then
+#   hub pull-request -b $head_branch -F PR_MESSAGE --no-edit -o -r $reviewers
+# elif [[ -n "$assignee" ]]; then
+#   hub pull-request -b $head_branch -F PR_MESSAGE --no-edit -o -a $assignee
+# else
+#   hub pull-request -b $head_branch -F PR_MESSAGE --no-edit -o
+# fi
 
 # Cleanup temp files
 rm -f TMP PR_MESSAGE PR_MESSAGE-e
