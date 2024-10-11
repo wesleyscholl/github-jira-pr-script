@@ -2,6 +2,14 @@
 
 Manually creating a GitHub pull request is a time-consuming task. Save time using this shell script.
 
+
+
+> [!NOTE]  
+> **There are now two versions of this script:**
+>
+> - `pr-script.sh` pulls JIRA ticket information and populates a pre-existing pull request template, PR summary provided by Gemini AI.
+> - `public-pr-script.sh` creates a new pull request using the branch name, `git diff`, and git commits with hashes, PR summary provided by Gemini AI. I created this version for general use, not specific to Jira.  
+
 ## Table of Contents
 * [What this script automates](#what-this-script-automates)
 * [Requirements](#requirements)
@@ -35,6 +43,19 @@ Manually creating a GitHub pull request is a time-consuming task. Save time usin
 
 ## Requirements
 
+> [!IMPORTANT]  
+> For the public script, there are fewer requirements: GitHub CLI (hub), GitHub Token (set in .bash_profile or .zshrc), Gemini AI API Key, Set reviewers (Code reviewer usernames) and assignee (your GitHub username) in the .bash_profile or .zshrc, and a GitHub repository
+## Configuration instructions: 
+## Gemini API Key (set in .bash_profile or .zshrc)
+## 
+## Optional - Setting an alias for this script in .bash_profile or .zshrc (alias pr='~/public-pr-script.sh')
+## Usage: pr [head branch] - Ex. 'pr develop', 'pr main', 'pr master', defaults to develop branch
+## Note: This script will push local commits to the remote branch and create a pull request on GitHub
+## Gemini AI will generate a PR summary for the pull request
+## The PR summary will include the PR title, PR summary, code changes, and commit messages with hashes
+## For detailed configuration instructions and usage, refer to the GitHub repository:
+## https://github.com/wesleyscholl/github-jira-pr-script
+
 | Name | Description | Link, Location, or Command |
 | --- | --- | --- |
 | `hub` | GitHub CLI - Adds additional GitHub commands to access the API from the CLI. | [hub](https://hub.github.com/) |
@@ -45,6 +66,7 @@ Manually creating a GitHub pull request is a time-consuming task. Save time usin
 | `PULL_REQUEST_TEMPLATE` | A pull request template to be used if a template does not exist in the repo. | Static location on your local computer - `PULL_REQUEST_TEMPLATE` in the same folder as `pr_script.sh` |
 | `Environment Variables` | Environment variables that are stored in the terminal/bash/zsh configuration. Includes: `<pr_script>.sh` path alias, `jira_url`, `jira_access_token`, `github_author` and `github_reviewers` | `~/.bash_profile` or `~/.zshrc` - open with `open ~/.bash_profile` or `open ~/.zshrc` - then load with `source ~/.bash_profile` or `source ~/.zshrc` |
 | `Git Bash` ***Required for Windows** | Git Bash provides a UNIX command line emulator for windows which can be used to run Git, shell commands, and much more. | [Download Git Bash](https://gitforwindows.org/) |
+
 
 ## Mac Installation
 
