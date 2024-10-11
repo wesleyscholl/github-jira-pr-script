@@ -120,13 +120,7 @@ if [ -s TMP ]; then
 fi
 
 # Add the git diff with proper code block formatting
-echo '```' > TMP
-sed -i -e '/### Code Changes/r TMP' PR_MESSAGE
-
-echo "$gitdiff" > TMP
-sed -i -e '/### Code Changes/r TMP' PR_MESSAGE
-
-echo '```diff' > TMP
+printf '```\n%s\n```diff\n' "$gitdiff" > TMP
 sed -i -e '/### Code Changes/r TMP' PR_MESSAGE
 
 # Print the PR_MESSAGE, reviewers and assignee
